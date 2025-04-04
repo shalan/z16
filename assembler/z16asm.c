@@ -229,35 +229,44 @@
  }
 
  // Parse an immediate value. Supports decimal, octal, hex, binary, %hi(...) and %lo(...).
- int parseImmediate(const char *token) {
-     if(strncmp(token, "%hi(", 4)==0) {
+int parseImmediate(const char *token) {
+     Symbol* token_symbol = findSymbol(token);
+     if(token_symbol) {
+         return token_symbol->address;  // Directly return symbol address if found
+     }
+
+     if(strncmp(token, "%hi(", 4) == 0) {
          const char *p = token + 4;
-         char numberStr[64];
+         char innerToken[64];
          int i = 0;
          while(*p && *p != ')') {
-             numberStr[i++] = *p++;
+             innerToken[i++] = *p++;
          }
-         numberStr[i] = '\0';
-         int value = (int)strtol(numberStr, NULL, 0);
+         innerToken[i] = '\0';
+
+         // Check if inner token is a symbol
+         Symbol* inner_symbol = findSymbol(innerToken);
+         int value = inner_symbol ? inner_symbol->address : (int)strtol(innerToken, NULL, 0);
+
          return value >> 7;
      }
-     if(strncmp(token, "%lo(", 4)==0) {
+
+     if(strncmp(token, "%lo(", 4) == 0) {
          const char *p = token + 4;
-         char numberStr[64];
+         char innerToken[64];
          int i = 0;
          while(*p && *p != ')') {
-             numberStr[i++] = *p++;
+             innerToken[i++] = *p++;
          }
-         numberStr[i] = '\0';
-         int value = (int)strtol(numberStr, NULL, 0);
+         innerToken[i] = '\0';
+
+         // Check if inner token is a symbol
+         Symbol* inner_symbol = findSymbol(innerToken);
+         int value = inner_symbol ? inner_symbol->address : (int)strtol(innerToken, NULL, 0);
+
          return value & 0x7F;
      }
-     // Support binary constants with "0b" or "0B" prefix.
-     if(token[0]=='0' && (token[1]=='b' || token[1]=='B'))
-         return (int)strtol(token+2, NULL, 2);
-     return (int)strtol(token, NULL, 0);
  }
-
  // -----------------------
  // Source Line Structures and Parsing
  // -----------------------
