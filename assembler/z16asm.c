@@ -761,7 +761,7 @@
                  int currPC = line->address;
                  int targetPC = sym->address;
                  int offset = (targetPC - currPC);
-                 if(offset < -128 || offset > 127) {
+                 if(offset < -512 || offset > 511) {
                      fprintf(stderr, "Error on line %d: Jump offset out of range\n", line->lineNo);
                      exit(1);
                  }
