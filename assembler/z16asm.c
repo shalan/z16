@@ -772,7 +772,7 @@
                  machineWord |= ((offset9To4) << 9);
                  machineWord |= ((rd & 0x7) << 6);
                  machineWord |= ((offset3To1) << 3);
-                 machineWord |= (inst->opcode & 0xF);
+                 machineWord |= (inst->opcode & 0x7);
              } else if(inst->type == INST_U) {
                  // U‑type: Format: f | imm[15:10] | rd | imm[9:7] | opcode.
                  char *ops = line->operands;
