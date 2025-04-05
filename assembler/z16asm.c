@@ -170,6 +170,7 @@
      {"ori",   INST_I, 1, 4, 0},
      {"andi",  INST_I, 1, 5, 0},
      {"xor",   INST_R, 0, 6, 0},
+     {"xori",  INST_I, 1, 6, 0},
      {"li",    INST_I, 1, 7, 0},
      {"beq",   INST_B, 2, 0, 0},
      {"bne",   INST_B, 2, 1, 0},
@@ -649,7 +650,7 @@
                          fprintf(stderr, "Error on line %d: Undefined label '%s'\n", line->lineNo, token);
                          exit(1);
                      }
-                     offset = (sym->address - (line->address + 2)) >> 1;
+                     offset = (sym->address - (line->address)) >> 1;
                      if(offset < -8 || offset > 7) {
                          fprintf(stderr, "Error on line %d: Branch offset out of range\n", line->lineNo);
                          exit(1);
