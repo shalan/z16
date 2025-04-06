@@ -157,7 +157,6 @@
      {"sra",   INST_R, 0, 3, 0x8},
      {"or",    INST_R, 0, 4, 0x1},
      {"and",   INST_R, 0, 5, 0x0},
-     {"xor",   INST_R, 0, 6, 0x4},
      {"mv",    INST_R, 0, 7, 0x0},
      {"jr",    INST_R, 0, 0, 0x4},
      {"jalr",  INST_R, 0, 0, 0x8},
@@ -170,6 +169,7 @@
      {"ori",   INST_I, 1, 4, 0},
      {"andi",  INST_I, 1, 5, 0},
      {"xor",   INST_R, 0, 6, 0},
+     {"xori",  INST_I, 1, 6, 0},
      {"li",    INST_I, 1, 7, 0},
      {"beq",   INST_B, 2, 0, 0},
      {"bne",   INST_B, 2, 1, 0},
@@ -772,7 +772,7 @@
                  machineWord |= ((offset9To4) << 9);
                  machineWord |= ((rd & 0x7) << 6);
                  machineWord |= ((offset3To1) << 3);
-                 machineWord |= (inst->opcode & 0xF);
+                 machineWord |= (inst->opcode & 0x7);
              } else if(inst->type == INST_U) {
                  // U‑type: Format: f | imm[15:10] | rd | imm[9:7] | opcode.
                  char *ops = line->operands;
