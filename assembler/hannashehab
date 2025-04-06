@@ -169,7 +169,6 @@
      {"srai",  INST_I, 1, 3, 0},
      {"ori",   INST_I, 1, 4, 0},
      {"andi",  INST_I, 1, 5, 0},
-     {"xor",   INST_R, 0, 6, 0},
      {"li",    INST_I, 1, 7, 0},
      {"beq",   INST_B, 2, 0, 0},
      {"bne",   INST_B, 2, 1, 0},
