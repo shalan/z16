@@ -1,0 +1,99 @@
+Line   Address   Machine Code    Source
+-----------------------------------------------------
+   1                          .org 0x0000
+   2                          .text
+   3   0x0000                  start:
+   4   0x0000                      ; Initialize stack pointer
+   5   0x0000   0486             lui sp, 0x10         ; Load upper 10 bits of 0x1000
+   6   0x0002   0081             addi sp, 0x00    ; sp = 0x1000
+   7   0x0004                      
+   8   0x0004                      ; Test U-type instructions
+   9   0x0004   0DA6             lui a0, 0x1234       ; Load upper immediate
+  10   0x0006   81C6             auipc a1, 0x00       ; Add upper immediate to PC
+  11   0x0008                      
+  12   0x0008                      ; Test I-type arithmetic
+  13   0x0008   1E01             addi t0, 15      ; t0 = 15 (LI pseudo-instruction)
+  14   0x000A   D8C1             addi s0, -20     ; s0 = -20
+  15   0x000C   0149             slti t1, 0       ; Set less than immediate (should be 1)
+  16   0x000E   FFA9             andi a0, 0xFF    ; Mask lower 8 bits
+  17   0x0010                      
+  18   0x0010                      ; Test R-type operations
+  19   0x0010   0178             mv t1, t0            ; Copy register (pseudo-instruction)
+  20   0x0012   0AC0             add s0, t1       ; 15 + 15 = 30
+  21   0x0014   1700             sub s1, s0       ; 0 - 30 = -30
+  22   0x0016   47F0             xor a1, s0       ; Bitwise XOR
+  23   0x0018                      
+  24   0x0018                      ; Test memory operations (S/L-type)
+  25   0x0018   008B             sw t0, 0(sp)         ; Store to stack
+  26   0x001A   058C             lw a0, 0(sp)        ; Load from stack
+  27   0x001C   F881             addi sp, -4     ; Adjust stack
+  28   0x001E                      
+  29   0x001E                      ; Test pseudo-instructions
+  30   0x001E   9A39             li t0, 0xABCD       ; Load immediate (pseudo: lui + addi)
+  31   0x0020                      
+  32   0x0020                      ; Test control flow
+  33   0x0020   826D             jal ra, subroutine  ; Call subroutine
+  34   0x0022   0182             beq a0, t0, test_branches
+  35   0x0024                      
+  36   0x0024                  test_branches:
+  37   0x0024                      ; Test B-type instructions
+  38   0x0024   1401             addi x0, 10
+  39   0x0026   1541             addi t1, 10
+  40   0x0028   4A02             beq t0, t1, branch_eq    ; Should jump
+  41   0x002A                      
+  42   0x002A                  loop:
+  43   0x002A   FE01             addi t0, -1
+  44   0x002C   F01A             bnz t0, loop          ; Loop 10 times
+  45   0x002E                      
+  46   0x002E                      ; Test various branch conditions
+  47   0x002E   30E2             blt s0, x0, branch_lt  ; -30 < 0
+  48   0x0030                      
+  49   0x0030                      ; Test J-type jumps
+  50   0x0030   060D             j end
+  51   0x0032                      
+  52   0x0032                  branch_eq:
+  53   0x0032   03C1             addi a1, 1
+  54   0x0034   7E05             j test_branches
+  55   0x0036                      
+  56   0x0036                  branch_lt:
+  57   0x0036   05C1             addi a1, 2
+  58   0x0038   7C35             j test_branches
+  59   0x003A                      
+  60   0x003A                  subroutine:
+  61   0x003A                      ; Test stack operations
+  62   0x003A   F081             addi sp, -8
+  63   0x003C   468B             sw s0, 4(sp)        ; Save callee-saved
+  64   0x003E   088B             sw s1, 0(sp)
+  65   0x0040                      
+  66   0x0040                      ; Test argument registers
+  67   0x0040   0B81             addi a0, 5
+  68   0x0042   07C1             addi a1, 3
+  69   0x0044   806D             jal ra, multiply
+  70   0x0046                      
+  71   0x0046                      ; Restore registers
+  72   0x0046   050C             lw s1, 0(sp)
+  73   0x0048   44CC             lw s0, 4(sp)
+  74   0x004A   1081             addi sp, 8
+  75   0x004C   4200             jr ra               ; Return
+  76   0x004E                      
+  77   0x004E                  multiply:
+  78   0x004E                      ; Simple multiplication using adds
+  79   0x004E   0001             addi t0, 0
+  80   0x0050   0141             addi t1, 0
+  81   0x0052   0181             addi a0, 0
+  82   0x0054                  mult_loop:
+  83   0x0054   4152             bz t1, mult_end
+  84   0x0056   0F80             add a0, a1
+  85   0x0058   FF41             addi t1, -1
+  86   0x005A   7E2D             j mult_loop
+  87   0x005C                  mult_end:
+  88   0x005C   4200             jr ra
+  89   0x005E                      
+  90   0x005E                  error:
+  91   0x005E                      ; Error handler
+  92   0x005E   2A2E             lui t0, 0xDEAD
+  93   0x0060   DE01             addi t0, 0xBEEF
+  94   0x0062                      
+  95   0x0062                  end:
+  96   0x0062                      ; System call to terminate
+  97   0x0062   00C7             ecall 3

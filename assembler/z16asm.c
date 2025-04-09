@@ -560,7 +560,8 @@ int parseImmediate(const char *token) {
                      // For jr and jalr, if second operand is missing, set reg2 = 0.
                      if(cmpIgnoreCase(inst->mnemonic, "jr") == 0 ||
                         cmpIgnoreCase(inst->mnemonic, "jalr") == 0) {
-                         reg2 = 0;
+                         reg2 = reg1;
+                         reg1 = 0;
                      } else {
                          fprintf(stderr, "Error on line %d: Expected second register operand\n", line->lineNo);
                          exit(1);
