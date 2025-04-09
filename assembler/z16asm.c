@@ -325,6 +325,33 @@ int parseImmediate(const char *token) {
      }
  }
 
+ char *unescapeString(const char *src) {
+    char *dest = malloc(strlen(src) + 1);  // Destination buffer
+    char *d = dest;
+    const char *s = src;
+
+    while (*s) {
+        if (*s == '\\') {
+            s++;
+            switch (*s) {
+                case 'n': *d++ = '\n'; break;
+                case 't': *d++ = '\t'; break;
+                case 'r': *d++ = '\r'; break;
+                case '\\': *d++ = '\\'; break;
+                case '"': *d++ = '"'; break;
+                case '0': *d++ = '\0'; break;
+                default: *d++ = *s; break; // Unknown escape, keep as-is
+            }
+            s++;
+        } else {
+            *d++ = *s++;
+        }
+    }
+    *d = '\0';
+    return dest;
+ }
+
+
  // Parse a source line into label, mnemonic, and operands.
  // Comments (starting with '#' or ';') are removed and the mnemonic is converted to lower-case.
  void parseSourceLine(Line *line) {
@@ -358,7 +385,7 @@ int parseImmediate(const char *token) {
          char *ops = strtok(NULL, "\n");
          if(ops) {
              while(isspace((unsigned char)*ops)) ops++;
-             line->operands = strdup(ops);
+             line->operands = unescapeString(ops);
          }
      }
  }
@@ -410,6 +437,7 @@ int parseImmediate(const char *token) {
                      s[strlen(s)-1] = '\0';
                      s++;
                  }
+                line->operands = strdup(s);
                  int len = (int)strlen(s) + 1;
                  line->elementSize = 1; // each character is a byte
                  loc_data += len;
