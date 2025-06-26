@@ -7,4 +7,7 @@
     <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="21" type="long" />
     <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppFormatterOtherPage" type="string" />
   </component>
+  <component name="Black">
+    <option name="sdkName" value="Python 3.12 (z16-fork)" />
+  </component>
 </project>

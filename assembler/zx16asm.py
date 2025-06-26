@@ -1059,27 +1059,29 @@ class ZX16Assembler:
             
             encoding = (funct4 << 12) | (rs2 << 9) | (rd << 6) | (func3 << 3) | InstructionFormat.R_TYPE.value
             return encoding
-        
+
         # I-Type instructions
         elif mnemonic in parser.i_type_instructions:
             if len(operands) < 2:
                 raise SyntaxError(f"I-Type instruction {mnemonic} requires 2 operands")
-            
+
             func3 = parser.i_type_instructions[mnemonic]
             rd = operands[0]
             imm = operands[1]
-            
+
             if isinstance(imm, str):
-                raise SyntaxError(f"Unresolved symbol in immediate: {imm}")
-            
-            # Sign extend 7-bit immediate
-            imm = parser.sign_extend(imm, 7)
-            if imm < -64 or imm > 63:
-                raise SyntaxError(f"Immediate out of range: {imm}")
-            
+               raise SyntaxError(f"Unresolved symbol in immediate: {imm}")
+
+            if not isinstance(imm, int):
+                raise SyntaxError(f"Immediate must be an integer or symbol, got {type(imm)}")
+
+            if not -64 <= imm <= 63:
+                raise SyntaxError(f"I-type immediate out of range: {imm}")
+
+         # Encode: imm[6:0] << 9 | rd << 6 | func3 << 3 | opcode
             encoding = ((imm & 0x7F) << 9) | (rd << 6) | (func3 << 3) | InstructionFormat.I_TYPE.value
             return encoding
-        
+
         # Shift instructions (special I-Type)
         elif mnemonic in parser.shift_instructions:
             if len(operands) < 2:
